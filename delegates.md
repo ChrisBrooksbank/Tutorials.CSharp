@@ -19,7 +19,7 @@ Console.ReadLine();
 ```
 
 And this would display 43.
-Actually you dont need tp specify Invoke explicitly, you can simplify above to :
+Actually you dont need to specify Invoke explicitly, you can simplify above to :
 ```c#
 TakesIntReturnsInt incrementerDelegate = new TakesIntReturnsInt(i => i+1);
 Console.WriteLine(incrementerDelegate(42));
@@ -31,7 +31,7 @@ If you havent seen the lambda notation before.
 i => i+1
 ```
 
-Its simply a convient way of defining an anonymous function
+Its simply a convenient way of defining an anonymous function
 
 i.e. we could have said :
 ```c#
@@ -69,7 +69,7 @@ delegate int TakesIntReturnsInt(int x);
 ```
 
 However c# has support for generic delegates. 
-See [generictypes.md](Generic Types)
+See [Generic Types](GenericTypes.md)
 
 e.g.
 ```c#
@@ -82,10 +82,10 @@ Some scenarios are very common and the dotnet framework comes with types in the 
 of delegate types you need to define yourself.
 
 ###Func
-These are a site of pre defined generic delegate classes taking from zero to 16 input parameters and returning a value.
+These are a set of pre defined generic delegate classes taking from zero to 16 input parameters and returning a value.
 
 ###Action
-These are a site of pre defined generic delegate classes taking from zero to 16 input parameters and returning void.
+These are a set of pre defined generic delegate classes taking from zero to 16 input parameters and returning void.
 
 ###EventHandler
 This is a generic delegate type supporting #Event.
