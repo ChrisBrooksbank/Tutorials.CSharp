@@ -55,4 +55,47 @@ class Program
 
 But thats a lot of typing, here we had to create a named method.
 
+##Multicast Delegates
+Delegates are all multicast delegates. 
+This means one delegate can point to a list of compatible methods.
+These are added with +=
+Or removed with -=
+
+
+##Generic Delegate Types
+Above we created a non generic delegate type :
+```c#
+delegate int TakesIntReturnsInt(int x);
+```
+
+However c# has support for generic delegates. 
+See [generictypes.md](Generic Types)
+
+e.g.
+```c#
+delegate void DrawShape<T>(T arg);
+```
+
+##Delegate types in the box
+
+Some scenarios are very common and the dotnet framework comes with types in the box to reduce the number
+of delegate types you need to define yourself.
+
+###Func
+These are a site of pre defined generic delegate classes taking from zero to 16 input parameters and returning a value.
+
+###Action
+These are a site of pre defined generic delegate classes taking from zero to 16 input parameters and returning void.
+
+###Event
+If you declare a type as a event rather than a delegate you get some important advantages when used in the popular publish, subscribe model. This is where a class publishes an event, e.g. that fires off whenever it changes. Subscribes can subscribe to this event to be notified of changes.
+
+The advantage of using event rather than delegate is subscribers lose the ability to invoke the delegate themself. They are also unable to remove other subscribers from the event.
+
+There is a standard pattern to follow when you want to define a event on a class and allow multiple subscribers.
+
+```c#
+
+
+```
 
