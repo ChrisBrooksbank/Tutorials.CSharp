@@ -9,37 +9,40 @@ Its OK to return that into a variable declared as a Shape.
 Because a Square is a Shape.
 
 What about if you have a generic type, such as 
-```c# class ShapeStack<T> where T :IShape
+```c# 
+class ShapeStack<T> where T :IShape
+```
 
 maybe you would expect
 ShapeStack<Shape> to be implicitly converted to a ShapeStack<Square>
-That would be termed contravariance.
 Or maybe you would expect a ShapeStack<Square> to be implicitly converted to aS hapeStack<Shape>
-That would be termed contravariance.
 
-You would be wrong. However this can be done.
+You would be wrong. 
+However this can be achieved with some changes to the code.
 
-Would you expect this code to compile :
-```c# ShapeStack<Circle> circleStack = new ShapeStack<Circle>();
+You wouldnt expect this code to compile, circles and squares are not compatible  
+```c# 
+ShapeStack<Circle> circleStack = new ShapeStack<Circle>();
 ShapeStack<Square> squarestack = circleStack;
+```
 
-No, you get a error : 
+Error : 
 Cannot implicitly convert type 'ChrisBrooksbank.Shapes.ShapeStack<ChrisBrooksbank.Shapes.Circle>' to 'ChrisBrooksbank.Shapes.ShapeStack<ChrisBrooksbank.Shapes.Square>'
 
-What about this code ? : 
-```c#  ShapeStack<IShape> shapeStack = new ShapeStack<IShape>();
+What about this code ?
+```c#  
+ShapeStack<IShape> shapeStack = new ShapeStack<IShape>();
 ShapeStack< Square > squarestack = shapeStack;
+```
 
-No that doesnt compile either :
+Error :
 Cannot implicitly convert type 'ChrisBrooksbank.Shapes.ShapeStack<ChrisBrooksbank.Shapes.IShape>' to 'ChrisBrooksbank.Shapes.ShapeStack<ChrisBrooksbank.Shapes.Square>'
 
-But you cant even compile this code :
-```c#   ShapeStack<Square> squarestack = new ShapeStack<Square>();
+This also fails to compile 
+```c#   
+ShapeStack<Square> squarestack = new ShapeStack<Square>();
 ShapeStack<IShape> shapeStack = squarestack;
-
-That might appear puzzling/annoying
-
-=>
+```
 
 #Covariance
 
@@ -54,22 +57,22 @@ And X is a generic type.
 Then type X is said to have a contravariant type parameter
 If X<B> is implicitly convertable to X<A>
 
-=>
+#Creating CoVariant and ContraVariant Generic Types
 So our ShapeStack has neither a Contravariant or a Covariant type parameter.
 As you saw with the compiler errors above.
 
 Why is this , and how would we fix this if we wanted to ?
 
-The problem is that only types which are passed as parameters ( and never returned can be covariant)
-And only types which are returned ( and never passed in ) can be contravariant.
+Only "Input only" types result in Covariant generic types
+Only "Output only" types result in Contravariant generic types
 
-A method accepting a Shape, you also want to accept a Square. ( Covariance )
-But its impossible for a method accepting a Square to accept a Shape, that makes no sense.
+Confused ? Think about this in terms of shapes.
+In only : void Push(Shape shape) can accept a Square ( or Circle, or Triangle or Shape)
+Out only : Square Pop() can return into a Shape ( or Square )
 
-Similary its OK to return a Square into a Shape ( Contravarince )
-But you could never return a Shape into a Square, that makes no sense.
+We need to give the compiler a "in only" type and a "out only" type.
 
-So you need to Split your generic ShapeStack class between two interfaces. 
+So we need to Split the generic ShapeStack class between two interfaces, and mark as implementing both.
 One interface only takes in T, never returns it.
 And the other only returns T, never accepts it.
 Tell the compiler which is which.
@@ -85,8 +88,11 @@ interface IStackPusher<in T> where T : IShape
 {
    void Push(T shape);
 }
+```
 
-Note the word in here : ```c# <in T>
+Note the word in here : ```
+c# <in T>
+```
 It tells the compiler that the type is passed in, but never returned.
 i.e. that thhe type will be contravariantly valid.
 
@@ -96,7 +102,9 @@ Invalid variance: The type parameter 'T' must be contravariantly valid on 'IStac
 
 
 now we will modify existing class ShapeStack to mark it as implementing IStackPusher :
-```c#  class ShapeStack<T> : IStackPusher<T> where T :IShape
+```c#  
+class ShapeStack<T> : IStackPusher<T> where T :IShape
+```
 
 OK so if that worked
 We should be able to implicitly cast a IStackPusher<Shape> to a IStackPusher<Square>
@@ -106,6 +114,7 @@ Lets try:
 ShapeStack<Shape> shapeStack = new ShapeStack<Shape>();
 IStackPusher <Shape> shapePusher = shapeStack;
 IStackPusher<Square> squarePusher = shapePusher;
+```
 
 Yes, that compiles OK as expected
 Confiming that IStackPusher<T> has a covariant type parameter.
@@ -119,15 +128,19 @@ If you want to go ahead and create a contravariant type you will similary create
 {
    T Pop();
 }
+```
 
 and dont forget :
-```c#  class ShapeStack<T> : IStackPusher<T>, IStackPopper<T> where T :IShape
+```c#  
+class ShapeStack<T> : IStackPusher<T>, IStackPopper<T> where T :IShape
+```
 
 IStackPopper will have a contravariant type allowing code such as :
 ```c# 
 ShapeStack<Square> shapeStack = new ShapeStack<Square>();
 IStackPopper<Square> squarePopper = shapeStack;
 IStackPopper<Shape> shapePopper = squarePopper;
+```
 
 Again this seems commonsense
 If you are expecting to return a Square
