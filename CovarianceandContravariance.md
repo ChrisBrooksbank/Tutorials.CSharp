@@ -14,7 +14,7 @@ class ShapeStack<T> where T :IShape
 ```
 
 maybe you would expect
-ShapeStack<Shape> to be implicitly converted to a ShapeStack<Square>
+ShapeStack<Shape> to be implicitly converted to a ShapeStack\<Square\>
 Or maybe you would expect a ShapeStack\<Square\> to be implicitly converted to aS hapeStack\<Shape\>
 
 You would be wrong. 
@@ -49,13 +49,14 @@ ShapeStack<IShape> shapeStack = squarestack;
 If type A is implicitly convertable to type B.
 And X is a generic type.
 Then type X is said to have a covariant type parameter
-If X<A> is implicitly convertable to X<B>
+If X\<A\> is implicitly convertable to X\<B\>
 
 #Contravariant
+
 If type A is implicitly convertable to type B.
 And X is a generic type.
 Then type X is said to have a contravariant type parameter
-If X<B> is implicitly convertable to X<A>
+If X\<B\> is implicitly convertable to X<A>
 
 #Creating CoVariant and ContraVariant Generic Types
 So our ShapeStack has neither a Contravariant or a Covariant type parameter.
@@ -78,7 +79,7 @@ And the other only returns T, never accepts it.
 Tell the compiler which is which.
 Now you can have covariant and contravariant behaviour.
 
-In ShapeStack <T> is both passed in and returned.
+In ShapeStack \<T\> is both passed in and returned.
 Passed in, in push.
 Returned in pop.
 
@@ -148,14 +149,10 @@ It should also be fine to return a Shape
 Because a Shape is what Square inherits from
 
 #Summary
-If you want to be able to implicitly convert between closed generic types, closed around related ( by inheritence ) types you need to either specify :
-* The open type must either only accept the type, never return it
-* Or the open type must only return the type, never accept it.
-* That may be impossible, so instead split these two cases into two different generic interfaces, which your generic type implement.
-* The interface must specify <in T> or <out T>
-* Cast the closed generic type to the relevant interface
-* These interfaces are covariant or contravariant
+You probably know that when a method wants a Shape you could pass in a Square.
+Or that when a method returns a Square you can return it into a Shape.
 
+However if you want a generic type to have covariant and contravariant types then you must specify in and out on the types. This may mean splitting into two interfaces.
 
 
 
