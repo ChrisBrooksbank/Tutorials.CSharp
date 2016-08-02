@@ -87,6 +87,9 @@ These are a site of pre defined generic delegate classes taking from zero to 16 
 ###Action
 These are a site of pre defined generic delegate classes taking from zero to 16 input parameters and returning void.
 
+###EventHandler
+This is a generic delegate type supporting #Event.
+
 ###Event
 If you declare a type as a event rather than a delegate you get some important advantages when used in the popular publish, subscribe model. This is where a class publishes an event, e.g. that fires off whenever it changes. Subscribes can subscribe to this event to be notified of changes.
 
@@ -94,8 +97,55 @@ The advantage of using event rather than delegate is subscribers lose the abilit
 
 There is a standard pattern to follow when you want to define a event on a class and allow multiple subscribers.
 
+First you should create a descendant of the EventArgs class, to pass the information you want subscribers to see.
+Now you can define an event on your class of type EventHandler<CustomEventArgsClassName>
+Create a protected virtual void method called On<EventName> which invokes the event
+Add the code which fires the event e.g. in a setter
+
+Now lets add an event to our Shape class, which will now look like this :
 ```c#
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ChrisBrooksbank.Shapes
+{
+
+    public class ShapeChangedEventArgs : EventArgs
+    {
+        public readonly string OldShapeDescription;
+        public readonly string NewShapeDescription;
+        public ShapeChangedEventArgs(string oldShapeDescription, string newShapDescription)
+        {
+            OldShapeDescription= oldShapeDescription;
+            NewShapeDescription = newShapDescription;
+        }
+    }
 
 
+    class Shape: IShape
+    {
+        public String ShapeDescription
+        {
+            get { return ShapeDescription; }
+            set {
+                if (ShapeDescription.Equals(value)) return;
+                OnShapeChanged(new ShapeChangedEventArgs(ShapeDescription, value));
+                ShapeDescription = value;
+            }
+        }
+
+        public event EventHandler<ShapeChangedEventArgs> ShapeChanged;
+
+        protected virtual void OnShapeChanged(ShapeChangedEventArgs e)
+        {
+            if (ShapeChanged != null) ShapeChanged(this, e);
+        }
+
+
+    }
+}
 ```
 
