@@ -14,7 +14,7 @@ class ShapeStack<T> where T :IShape
 ```
 
 maybe you would expect
-ShapeStack<Shape> to be implicitly converted to a ShapeStack\<Square\>
+ShapeStack\<Shape\> to be implicitly converted to a ShapeStack\<Square\>
 Or maybe you would expect a ShapeStack\<Square\> to be implicitly converted to a ShapeStack\<Shape\>
 
 You would be wrong. 
