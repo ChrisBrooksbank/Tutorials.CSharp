@@ -84,9 +84,9 @@ class ShapeStack<T> where T :IShape
 }
 ```
 
-So the notation <T> is the most important part.
+So the notation \<T\> is the most important part.
 This is more like the template of a class, than a class.
-The <T> is the marker for a type which we are not defining.
+The \<T\> is the marker for a type which we are not defining.
 
 You can see we use the T, class marker, in different places in this class template
 Push() takes a T
