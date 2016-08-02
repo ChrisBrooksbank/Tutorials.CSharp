@@ -15,7 +15,7 @@ class ShapeStack<T> where T :IShape
 
 maybe you would expect
 ShapeStack<Shape> to be implicitly converted to a ShapeStack\<Square\>
-Or maybe you would expect a ShapeStack\<Square\> to be implicitly converted to aS hapeStack\<Shape\>
+Or maybe you would expect a ShapeStack\<Square\> to be implicitly converted to a ShapeStack\<Shape\>
 
 You would be wrong. 
 However this can be achieved with some changes to the code.
@@ -27,7 +27,7 @@ ShapeStack<Square> squarestack = circleStack;
 ```
 
 Error : 
-Cannot implicitly convert type 'ChrisBrooksbank.Shapes.ShapeStack<ChrisBrooksbank.Shapes.Circle>' to 'ChrisBrooksbank.Shapes.ShapeStack<ChrisBrooksbank.Shapes.Square>'
+Cannot implicitly convert type 'ChrisBrooksbank.Shapes.ShapeStack\<ChrisBrooksbank.Shapes.Circle\>' to 'ChrisBrooksbank.Shapes.ShapeStack\<ChrisBrooksbank.Shapes.Square\>'
 
 What about this code ?
 ```c#  
@@ -36,11 +36,11 @@ ShapeStack< Square > squarestack = shapeStack;
 ```
 
 Error :
-Cannot implicitly convert type 'ChrisBrooksbank.Shapes.ShapeStack<ChrisBrooksbank.Shapes.IShape>' to 'ChrisBrooksbank.Shapes.ShapeStack<ChrisBrooksbank.Shapes.Square>'
+Cannot implicitly convert type 'ChrisBrooksbank.Shapes.ShapeStack\<ChrisBrooksbank.Shapes.IShape\>' to 'ChrisBrooksbank.Shapes.ShapeStack\<ChrisBrooksbank.Shapes.Square\>'
 
 This also fails to compile 
 ```c#   
-ShapeStack<Square> squarestack = new ShapeStack<Square>();
+ShapeStack<Square> squarestack = new ShapeStack\Square\>();
 ShapeStack<IShape> shapeStack = squarestack;
 ```
 
@@ -56,7 +56,7 @@ If X\<A\> is implicitly convertable to X\<B\>
 If type A is implicitly convertable to type B.
 And X is a generic type.
 Then type X is said to have a contravariant type parameter
-If X\<B\> is implicitly convertable to X<A>
+If X\<B\> is implicitly convertable to X\<A\>
 
 #Creating CoVariant and ContraVariant Generic Types
 So our ShapeStack has neither a Contravariant or a Covariant type parameter.
@@ -91,8 +91,9 @@ interface IStackPusher<in T> where T : IShape
 }
 ```
 
-Note the word in here : ```
-c# <in T>
+Note the word in here : 
+```c# 
+<in T>
 ```
 It tells the compiler that the type is passed in, but never returned.
 i.e. that thhe type will be contravariantly valid.
