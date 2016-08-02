@@ -7,7 +7,7 @@ The following code :
 * displays "About to start calculation"
 * Hangs ( non responsive, blocked ), for three seconds, whilst it simulates running a, locally, computationally heavy process
 * displays "Calculation has finished"
-* displays "Returned from calculation with result : 43"
+* displays "Returned from calculation with result : 42"
 ```c#
 class Program
 {
@@ -48,7 +48,7 @@ The following, improved, code :
 * displays "Returned from calculation with result currently unknown - still computing"
 * Is not blocked, we could be running code in main thread, actually we just wait for user to press Enter
 * Approximently three seconds later the calculation finishes, on a seperate flag, the continuation is activated, code exection gos back to where it was when calculation started
-* displays "Returned from calculation with result : 43"
+* displays "Returned from calculation with result : 42"
 ```c#
 class Program
 {
@@ -77,17 +77,26 @@ class Program
 ```
 
 The above is a great solution for locally compute heavy calls.
-We dont need the overhead of running code on a seperate threads when the slowness is caused by API calls across processes though.
+However often the delay is because we are waiting for a API call on a seperate process, likely seperate server, to complete.
+This delay is unpredictable e.g. because of network conditions and current API load.
 
+We dont need to run the code on a seperate thread here.
+But we will defintely benefit from using await to attach a continuation.
 
+The following code :
+* displays "About to make API call"
+* displays "API call was made, we may still be waiting for result though"
+* Is not blocked, we could be running code in main thread, actually we just wait for user to press Enter
+* Approximently five seconds later, the API returns its result, our contineuation is activated
+* displays "API call is now returning"
 ```c#
  class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("About to get data that is speed dependnant on network");
+        Console.WriteLine("About to make API call");
         GetNonBlockingAPIResultWrapper();
-        Console.WriteLine("Done that call");
+        Console.WriteLine("API call was made, we may still be waiting for result though");
         Console.ReadLine();
     }
 
@@ -100,13 +109,22 @@ We dont need the overhead of running code on a seperate threads when the slownes
     static async Task<int> GetNonBlockingAPIResult()
     {
         await Task.Delay(5000);
-        Console.WriteLine("slow network API method about to return");
+        Console.WriteLine("API call is now returning");
         return 42;
     }
 
 }
 ```
 
+The above samples are designed to be simple to illustrate whats happening.
+They are not production ready, e.g. no exception handling code !
 
+What is a continuation ? whats actually happening above ?
+Well its all on one thread.
+Dotnet is creating a state machine in the background to implement the above flow.
 
+Maybe Wikipedia will help with understanding : 
+"First-class continuations are a language's ability to completely control the execution order of instructions. They can be used to jump to a function that produced the call to the current function, or to a function that has previously exited. One can think of a first-class continuation as saving the execution state of the program. It is important to note that true first-class continuations do not save program data – unlike a process image – only the execution context. This is illustrated by the "continuation sandwich" description:
+
+Say you're in the kitchen in front of the refrigerator, thinking about a sandwich. You take a continuation right there and stick it in your pocket. Then you get some turkey and bread out of the refrigerator and make yourself a sandwich, which is now sitting on the counter. You invoke the continuation in your pocket, and you find yourself standing in front of the refrigerator again, thinking about a sandwich. But fortunately, there's a sandwich on the counter, and all the materials used to make it are gone. So you eat it. :-)[4]"
 
