@@ -65,9 +65,8 @@ So, a better way is to define a generic class.
 We can define our CircleStack, TriangleStack and SquareStack, but only write the code once.
 
 We still get all the advantages of type safety, but we get to maintain DRY ( dont repeat yourself )
-This is done by defining one class ShapeStack :
-
- ```c#
+This is done by defining one class ShapeStack\<T\> :
+```C#
 class ShapeStack<T> where T :IShape
 {
     T[] shapes = new T[100];
@@ -87,7 +86,7 @@ class ShapeStack<T> where T :IShape
 
 So the notation <T> is the most important part.
 This is more like the template of a class, than a class.
-The <T> is a marker for another class.
+The <T> is the marker for a type which we are not defining.
 
 You can see we use the T, class marker, in different places in this class template
 Push() takes a T
@@ -103,9 +102,14 @@ This is called the Open form of the generic class, we havent specified a type.
 We close the generic class when we define an instance of it and specify T.
 
 So we simply change the line of code :
-```c# CircleStack circleStack = new CircleStack();
+```c# 
+CircleStack circleStack = new CircleStack();
+```
+
 to be :
-```c# ShapeStack<Circle> circleStack = new ShapeStack<Circle>();
+```c# 
+ShapeStack<Circle> circleStack = new ShapeStack<Circle>();
+```
 
 And everything continues to work as before.
 
@@ -126,12 +130,17 @@ i.e. three class definitions.
 All with near identical code, only the types would be different.
 
 But a much better approach was to use generics to define a single class
-```c# ShapeStack<T> where T :IShape
+```c# 
+ShapeStack<T> where T :IShape
+```
+
 Where ShapeStack is a class template, the template is waiting for you to specify T when you create a instance of this class.
 
 e.g. using
-```c# ShapeStack<Circle> circleStack = new ShapeStack<Circle>();
+```c# 
+ShapeStack<Circle> circleStack = new ShapeStack<Circle>();
+```
 
-The dotnet framework comes with several inbuilt generic types but as you have seen you can define your own.
+The dotnet framework comes with several inbuilt generic types but as you have seen you can also define your own.
 
 
