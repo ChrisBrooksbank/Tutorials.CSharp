@@ -47,7 +47,7 @@ The following, improved, code :
 * displays "About to start calculation"
 * displays "Returned from calculation with result currently unknown - still computing"
 * Is not blocked, we could be running code in main thread, actually we just wait for user to press Enter
-* Approximently three seconds later the calculation finishes, on a seperate flag, the continuation is activated, code exection gos back to where it was when calculation started
+* Approximently three seconds later the calculation finishes, on its seperate thread, the continuation is activated, code exection gos back to where it was when calculation started
 * displays "Returned from calculation with result : 42"
 ```c#
 class Program
