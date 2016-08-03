@@ -96,18 +96,22 @@ Gives this error :
 
 So how do we fix this ?
 
-Split the generic ShapeStack class between two interfaces, and mark ShapeStack as implementing both.
-One interface only returns T, never accepts it. ( and has covariant type parameter )
-The other interface only takes in T, never returns it. ( and has contravariant type parameter )
-Tell the compiler which is which.
-Now you can have covariant and contravariant behaviour.
+A generic type which accepts a T ( as opposed to returning a T ) can never be CoVariant for T.
+We can create a generic interface wich only returns a T ( and is covariant on T )
+And another generic interface which only accepts a T ( and is contravariant on T )
+Now we modify the definition of ShapeStack to implement both interfaces.
+
+ShapeStack remains non covariant and non contravariant with respect to T.
+However we can work with its interfaces instead.
 
 Define the T in and T out interfaces :
 ```c#
+// IStackPopper has a covariant type parameter T
 interface IStackPopper<out T> where T : Shape
 {
     T Pop();
 }
+// IStackPusher has a contraVariant type parameter T
 interface IStackPusher<in T> where T : Shape
 {
    void Push(T shape);
@@ -135,8 +139,8 @@ class ShapeStack<T> : IStackPopper<T>, IStackPusher<T> where T :Shape
 ```
 
 Now ShapeStack<T> still doesnt have a covariant or contravariant type parameter.
-However IStackPopper does have a covariant type.
-And IStackPusher does have a contravariant type.
+However IStackPopper does have a covariant type T.
+And IStackPusher does have a contravariant type T.
 
 So we can now convert our non working code
 ```c#
