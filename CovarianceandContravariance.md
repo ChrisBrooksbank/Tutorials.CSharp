@@ -85,13 +85,14 @@ Then ShapeStack is said to have a covariant type parameter
 If ShapeStack\<Circle\> is implicitly convertable to ShapeStack\<Shape\>
 
 So does ShapeStack have a covariant type paramater ? No.
+
 ```c#   
 ShapeStack<Circle> circleStack = new ShapeStack<Circle>();
 ShapeStack<Shape> shapeStack = circleStack;
 '''
 
 Gives this error :
-> Error	CS0029	Cannot implicitly convert type 'ChrisBrooksbank.Shapes.ShapeStack<ChrisBrooksbank.Shapes.Circle>' to 'ChrisBrooksbank.Shapes.ShapeStack<ChrisBrooksbank.Shapes.Shape>'
+> Error	CS0029	Cannot implicitly convert type 'ChrisBrooksbank.Shapes.ShapeStack\<ChrisBrooksbank.Shapes.Circle\>' to 'ChrisBrooksbank.Shapes.ShapeStack\<ChrisBrooksbank.Shapes.Shape\>'
 
 So how do we fix this ?
 
