@@ -38,7 +38,8 @@ C# has a await operator which lets the caller attach a continuation.
 C# also has a Task class, with a Run method, which runs a task on a different thread, helping keep the current one responsive.
 
 We need to add the async keyword to methods that have calls to await. 
-( This prevents potentially breaking old c# code, which may have used await as a variable name).
+( This prevents potentially breaking old c# code, which may have used await as a variable name. 
+It also adds a *lot* of code to the generated IL, e.g. to setup a state machine ).
 
 We cant mark a entry point, such as main, async, so we will need a wrapper for our compute heavy routine.
 Lets call that wrapper GetHeavyComputeCycleDataWrapper()
@@ -55,12 +56,12 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine("About to start calculation");
-        GetHeavyComputeCycleDataWrappper();
+        GetHeavyComputeCycleDataWrapper();
         Console.WriteLine("Returned from calculation with result currently unknown - still computing");
         Console.ReadLine();
     }
 
-    static async void GetHeavyComputeCycleDataWrappper()
+    static async void GetHeavyComputeCycleDataWrapper()
     {
         int data =  await Task<int>.Run( ( )=> GetHeavyComputeCycleData());
         Console.WriteLine("Returned from calculation with result : " + data.ToString());
@@ -76,7 +77,7 @@ class Program
 }
 ```
 
-The above is a great solution for locally compute heavy calls.
+The above is a good solution for locally compute heavy calls.
 However often the delay is because we are waiting for a API call on a seperate process, likely seperate server, to complete.
 This delay is unpredictable e.g. because of network conditions and current API load.
 
@@ -128,4 +129,4 @@ Maybe Wikipedia will help with understanding :
 
 Say you're in the kitchen in front of the refrigerator, thinking about a sandwich. You take a continuation right there and stick it in your pocket. Then you get some turkey and bread out of the refrigerator and make yourself a sandwich, which is now sitting on the counter. You invoke the continuation in your pocket, and you find yourself standing in front of the refrigerator again, thinking about a sandwich. But fortunately, there's a sandwich on the counter, and all the materials used to make it are gone. So you eat it. :-)[4]"
 
- [For more information, here is a good video](https://channel9.msdn.com/Events/Build/BUILD2011/TOOL-829T)
+ [For more information, here is a great video, "the zen of asynch Best practices for best peformance"](https://www.youtube.com/watch?v=zjLWWz2YnyQ)
