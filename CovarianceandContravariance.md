@@ -27,7 +27,7 @@ static void Main(string[] args)
     Shape shape = PopCircle();           
 }
 
-static Square PopCircle()
+static Circle PopCircle()
 {
     return new Circle();
 }
@@ -160,13 +160,34 @@ static void Main(string[] args)
     IStackPusher<Circle> circlePusher = shapePusher;
 
     circlePusher.Push( new Circle());
-    Circle aCircle = circlePopper.Pop();
+    Shape aShape = shapePopper.Pop();
 }
 ```
 
+The working example of covariance are these lines.
+```c#
+// covariance
+IStackPopper<Circle> circlePopper = new ShapeStack<Circle>();
+IStackPopper<Shape> shapePopper = circlePopper;
+```
 
 #Contravariant
+Contra variance is discussed above.
+It allows for implicit conversion in the opposite direction.
+
 If type A is implicitly convertable to type B.
 And X is a generic type.
 Then type X is said to have a contravariant type parameter
 If X\<B\> is implicitly convertable to X\<A\>
+
+So a Circle can be implicitly converted to a Shape.
+And IStackPusher is a generic type.
+Type IStackPusher is said to have a contravariant type parameter
+If IStackPusher\<Shape\> is implicitly convertable to IStackPusher\<Circle\>
+
+And it can :
+```c#
+// contravariance
+IStackPusher<Shape> shapePusher = new ShapeStack<Shape>();
+IStackPusher<Circle> circlePusher = shapePusher;
+```
