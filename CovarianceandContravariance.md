@@ -17,20 +17,19 @@ class Circle: Shape
 
 ##Covariance
 
-If you have a method that takes IN a Shape you can pass in a Shape or Square or Circle.
-This works because a Square is a Shape. And a Circle is a Shape.
+If you have a method that returns a Circle ( or Square ) you can assign it to a variable declared as a Shape.
+This works because a Square ( or Circle ) is a Shape.
 
 i.e. this code compiles and runs OK : 
 ```c#
 static void Main(string[] args)
 {
-    ProcessShape(new Shape());
-    ProcessShape(new Circle());
-    ProcessShape(new Square());
+    Shape shape = PopCircle();           
 }
 
-static void ProcessShape(Shape shape)
+static Square PopCircle()
 {
+    return new Circle();
 }
 ```
 
@@ -42,14 +41,14 @@ class ShapeStack<T> where T :Shape
     T[] shapes = new T[100];
     int stackPointer = 0;
 
-    public void Push(T shape)
-    {
-        shapes[stackPointer++] = shape;
-    }
-
     public T Pop()
     {
         return shapes[stackPointer--];
+    }
+
+    public void Push(T shape)
+    {
+        shapes[stackPointer++] = shape;
     }
 }
 ```
@@ -64,11 +63,16 @@ Then type X is said to have a covariant type parameter
 If X\<A\> is implicitly convertable to X\<B\>
 
 Type Circle is implicitly convertable to type Shape.
+As we already saw in this code :
 ```c#
 static void Main(string[] args)
 {
-    Circle circle = new Circle();
-    Shape shape = circle;
+    Shape shape = PopCircle();           
+}
+
+static Square PopCircle()
+{
+    return new Circle();
 }
 ```
 
@@ -92,45 +96,46 @@ Gives this error :
 So how do we fix this ?
 
 Split the generic ShapeStack class between two interfaces, and mark ShapeStack as implementing both.
-One interface only takes in T, never returns it.
-And the other only returns T, never accepts it.
+One interface only returns T, never accepts it. ( and has covariant type parameter )
+The other interface only takes in T, never returns it. ( and has contravariant type parameter )
 Tell the compiler which is which.
 Now you can have covariant and contravariant behaviour.
 
 Define the T in and T out interfaces :
 ```c#
+interface IStackPopper<out T> where T : Shape
+{
+    T Pop();
+}
 interface IStackPusher<in T> where T : Shape
 {
    void Push(T shape);
-}
- interface IStackPopper<out T> where T : Shape
-{
-    T Pop();
 }
 '''
 
 Specify ShapeStack as implementing these interfaces :
 '''c#
-class ShapeStack<T> : IStackPusher<T>, IStackPopper<T> where T :Shape
+class ShapeStack<T> : IStackPopper<T>, IStackPusher<T> where T :Shape
 {
     T[] shapes = new T[100];
     int stackPointer = 0;
-
-    public void Push(T shape)
-    {
-        shapes[stackPointer++] = shape;
-    }
 
     public T Pop()
     {
         return shapes[stackPointer--];
     }
+
+    public void Push(T shape)
+    {
+        shapes[stackPointer++] = shape;
+    }
+  
 }
 ```
 
-Now ShapeStack<T> still doesnt have a covariant or contravariant type.
-However IStackPusher does have a covariant type.
-And IStackPopper does have a contravariant type.
+Now ShapeStack<T> still doesnt have a covariant or contravariant type parameter.
+However IStackPopper does have a covariant type.
+And IStackPusher does have a contravariant type.
 
 So we can now convert our non working code
 ```c#
@@ -145,17 +150,21 @@ To working code which only works because covariance and contravariance type para
 ```c#
 static void Main(string[] args)
 {
+    // covariance
+    IStackPopper<Circle> circlePopper = new ShapeStack<Circle>();
+    IStackPopper<Shape> shapePopper = circlePopper;
+
+    // contravariance
     IStackPusher<Shape> shapePusher = new ShapeStack<Shape>();
     IStackPusher<Circle> circlePusher = shapePusher;
 
-    IStackPopper<Circle> circlePopper = new ShapeStack<Circle>();
-    IStackPopper<Shape> shapePopper = circlePopper;
+    circlePusher.Push( new Circle());
+    Circle aCircle = circlePopper.Pop();
 }
 ```
 
 
 #Contravariant
-
 If type A is implicitly convertable to type B.
 And X is a generic type.
 Then type X is said to have a contravariant type parameter
