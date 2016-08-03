@@ -112,10 +112,10 @@ interface IStackPusher<in T> where T : Shape
 {
    void Push(T shape);
 }
-'''
+```
 
 Specify ShapeStack as implementing these interfaces :
-'''c#
+```c#
 class ShapeStack<T> : IStackPopper<T>, IStackPusher<T> where T :Shape
 {
     T[] shapes = new T[100];
