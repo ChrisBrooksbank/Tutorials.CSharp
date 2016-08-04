@@ -1,0 +1,6 @@
+{
+  "name": "Tutorials.csharp",
+  "tagline": "C# tutorials by Chris Brooksbank",
+  "body": "# Welcome to Chris Brooksbank's C# Tutorials\r\n\r\nI created these mainly as a method of revisiting and revising concepts to brush off any cobwebs since I started developing C# code in 2002.\r\n\r\nI find explaining things to somebody else uncovers any weaknesses in your own understanding which can then be fixed.\r\n\r\nIf anyone does find these tutorials interesting, have any suggestions please let me know.\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
