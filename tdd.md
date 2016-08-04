@@ -1,4 +1,4 @@
-#TDD
+#TDD ( Draft V0.1 )
 
 TDD can stand for "Test Driven Development" or "Test Driven Design".
 
@@ -49,12 +49,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Hue.CSharp.TDD.Tests
 {
-    public interface IHueBridge
-    {
-        string GetNewUserName();
-    }
-
-    public class HueBridge: IHueBridge
+    public class HueBridge
     {
         public string GetNewUserName()
         {
@@ -68,7 +63,7 @@ namespace Hue.CSharp.TDD.Tests
         [TestMethod]
         public void CanGenerateNewUserName()
         {
-            IHueBridge bridge = new HueBridge();
+            HueBridge bridge = new HueBridge();
 
             string newUserName = bridge.GetNewUserName();
             Assert.IsNotNull(newUserName);
@@ -77,81 +72,24 @@ namespace Hue.CSharp.TDD.Tests
 }
 ```
 
-OK we created a abstraction for the Hue bridge by adding a IHueBridge interface and a concrete type HueBridge.
+OK we created a abstraction for the Hue bridge by adding a HueBridge class.
+( There was no justification to create a Interface type )
+
 Then we added a test for CanGenerateNewUserName() and added this method.
 The test fails as expected, because no username is generated.
 Thats as expected.
 TDD = test driven development.
-We create a failing test ( red ) then make it pass ( go green ), thats the normal flow in TDD
 
-##Inversion of Control ( IOC ) with structuremap
-I can immeditely see a problem, looking at
-```c#
-IHueBridge bridge = new HueBridge();
-```
+Red, Green, Refactor : 
+We create a failing test ( red ) then make it pass ( go green ), then we are free to refactor code
+thats the normal flow in TDD
 
-Our code should follow SOLID ( https://en.wikipedia.org/wiki/SOLID_(object-oriented_design) )
-And the D is "Dependency inversion principle"
-"one should “Depend upon Abstractions. Do not depend upon concretions"
-
-OK so our variable may be defined as the interface type, but the instantation of concrete class HueBridge is hardcoded into the test.
-Lets fix that first.
-
-Install the Nuget package : "StructureMap" and configure the IOC container in a test intitialiation method.
-Remove the hardcoding of the concrete HueBridge from the test.
-This gives us :
-
-```c#
-using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Hue.CSharp.TDD.Tests
-{
-
-    public interface IHueBridge
-    {
-        string GetNewUserName();
-    }
-
-    public class HueBridge: IHueBridge
-    {
-        public string GetNewUserName()
-        {
-            return null;
-        }
-    }
-
-    [TestClass]
-    public class BridgeTests
-    {
-        static StructureMap.Container iocContainer;
-
-        [TestInitialize]
-        public void TestInit()
-        {
-            iocContainer = new StructureMap.Container(_ =>
-            {
-                _.For<IHueBridge>().Use<HueBridge>();
-            });
-        }
-
-        [TestMethod]
-        public void CanGenerateNewUserName()
-        {
-            IHueBridge bridge = iocContainer.GetInstance<IHueBridge>();
-
-            string newUserName = bridge.GetNewUserName();
-            Assert.IsNotNull(newUserName);
-        }
-    }
-}
-```
 
 ##Mocking ( with Moq )
 We could continue building out the bridge tests and getting them to pass.
 However I would rather talk about mocking as this is meant to be a relatively short tutorial.
 
-Lets create a light bulb ( interface and class ).
+Lets create a light bulb.
 Which implements off and on.
 The bulb is associated with a bridge.
 
@@ -171,92 +109,72 @@ Which is why we mock the IHueBridge in the following code.
 
 So we generate our failing test : 
 ```c#
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Hue.CSharp.TDD.Tests
 {
-    public interface IHueBulb {
-        IHueBridge HueBridge { get; set; }
-        string BulbName { get; set; }
-
-        void TurnOn();
-        void TurnOff();
-        bool IsOn();
-        bool IsOff();
-    };
-
-    public class HueBulb : IHueBulb
+    public class HueBulb
     {
-        public IHueBridge HueBridge { get; set; }
+        public HueBridge Bridge { get; set; }
         public string BulbName { get; set; }
 
-        public bool IsOff()
+        public bool On
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        public int Brightness
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        public void Refresh()
         {
             throw new NotImplementedException();
         }
-
-        public bool IsOn()
+    }
+    public class HueColourBulb: HueBulb
+    {
+        public string Color
         {
-            throw new NotImplementedException();
-        }
-
-        public void TurnOff()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void TurnOn()
-        {
-            throw new NotImplementedException();
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
         }
     }
 
     [TestClass]
     public class BulbTests
     {
-        static StructureMap.Container iocContainer;
+        Mock<HueBridge> mockBridge;
 
         [TestInitialize]
         public void TestInit()
         {
-            iocContainer = new StructureMap.Container(_ =>
-            {
-                _.For<IHueBulb>().Use<HueBulb>();
-            });
+            mockBridge = new Mock<HueBridge>();
         }
 
         [TestMethod]
         public void LandingBulbTurnsOn()
         {
-            var mockBridge = new Mock<IHueBridge>();
-            IHueBridge bridge = mockBridge.Object;
+            HueBulb landingBulb = new HueBulb { Bridge = mockBridge.Object, BulbName = "Landing" };
 
-            IHueBulb bulb = iocContainer.GetInstance<IHueBulb>();
-            bulb.HueBridge = bridge;
-            bulb.BulbName  = "landing";
-
-            bulb.TurnOn();
-            Assert.IsTrue( bulb.IsOn(), "bulb didnt turn on");
+            landingBulb.On = true;
+            Assert.IsTrue(landingBulb.On, "bulb didnt turn on");
         }
 
     }
 }
 ```
 
-We can now write the implementation code to turn this test green.
+We should now write the implementation code to turn this test green.
+We need more thought to the design, e.g. the HueBridge will have a URL
+We also need something to represent a user
 
 A really important thing to note is the code we are writing to interact with our bulb :
 
 ```c#
-IHueBulb bulb = iocContainer.GetInstance<IHueBulb>();
-bulb.HueBridge = bridge;
-bulb.BulbName  = "landing";
-
-bulb.TurnOn();
+HueBulb landingBulb = new HueBulb { Bridge = mockBridge.Object, BulbName = "Landing" };
+landingBulb.On = true;
 ```
 
 TDD can stand for "Test Driven Design"
