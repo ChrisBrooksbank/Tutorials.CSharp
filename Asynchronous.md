@@ -2,11 +2,7 @@
 
 Sometimes you will need to call a method which puts a heavy load on a local processor and takes a significant amount of time before it returns.
 
-<<<<<<< HEAD
 The following code:
-=======
-The following code :
->>>>>>> 29f9d0a8bcc367c9566551a366ad98d4c96f048c
 * displays "About to start calculation"
 * Hangs (non-responsive, blocked), for three seconds, whilst it simulates running a, locally, computationally heavy process
 * displays "Calculation has finished"
@@ -51,8 +47,8 @@ The following, improved, code :
 * displays "About to start calculation"
 * displays "Returned from calculation with result currently unknown - still computing"
 * Is not blocked, we could be running code in main thread, actually we just wait for user to press Enter
-* Approximately three seconds later the calculation finishes, on its separate thread, the continuation is activated, code exection gos back to where it was when calculation started
-* displays "Returned from calculation with result : 42"
+* Approximately three seconds later the calculation finishes, on its separate thread, the continuation is activated, code execution go’s back to where it was when calculation started
+* displays "Returned from calculation with result: 42"
 ```c#
 class Program
 {
@@ -132,4 +128,4 @@ Maybe Wikipedia will help with understanding:
 
 Say you're in the kitchen in front of the refrigerator, thinking about a sandwich. You take a continuation right there and stick it in your pocket. Then you get some turkey and bread out of the refrigerator and make yourself a sandwich, which is now sitting on the counter. You invoke the continuation in your pocket, and you find yourself standing in front of the refrigerator again, thinking about a sandwich. But fortunately, there's a sandwich on the counter, and all the materials used to make it are gone. So you eat it. :-)[4]"
 
- [For more information, here is a great video, "the zen of asynch Best practices for best peformance"](https://www.youtube.com/watch?v=zjLWWz2YnyQ)
+ [For more information, here is a great video, "the zen of asynch Best practices for best performance"](https://www.youtube.com/watch?v=zjLWWz2YnyQ)
