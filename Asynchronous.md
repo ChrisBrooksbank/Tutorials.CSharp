@@ -2,7 +2,6 @@
 
 Sometimes you will need to call a method which puts a heavy load on a local processor and takes a significent amount of time before it returns.
 
-
 The following code :
 * displays "About to start calculation"
 * Hangs ( non responsive, blocked ), for three seconds, whilst it simulates running a, locally, computationally heavy process
