@@ -2,7 +2,11 @@
 
 Sometimes you will need to call a method which puts a heavy load on a local processor and takes a significant amount of time before it returns.
 
+<<<<<<< HEAD
 The following code:
+=======
+The following code :
+>>>>>>> 29f9d0a8bcc367c9566551a366ad98d4c96f048c
 * displays "About to start calculation"
 * Hangs (non-responsive, blocked), for three seconds, whilst it simulates running a, locally, computationally heavy process
 * displays "Calculation has finished"
